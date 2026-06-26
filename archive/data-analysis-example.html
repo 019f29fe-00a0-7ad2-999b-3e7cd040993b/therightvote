@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Science Projekt</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>HTML Example Document</h1>
+
+    <h2>Danfo Data Processing Example</h2>
+    <p>Dies ist ein Beispiel für eine tabellarische Ausgabe.</p>
+    <pre id="danfoTest"></pre>
+    <p>Die gleiche Ausgabe ebenfalls als JSON. Diese Daten werden ebenfalls für die Chartjs-Grafik unten verwendet.</p>
+    <pre id="danfoTestJson"></pre>
+
+    <canvas id="myChart" width="400" height="200"></canvas>
+
+    <div id="papadanfoTable"></div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/danfojs@1.2.0/lib/bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js"></script>
+  <!--<script src="https://cdn.jsdelivr.net/npm/plotly@1.0.6/index.min.js"></script>-->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+      s = new dfd.Series([1, 3, 5, undefined, 6, 8]);
+      s.print();
+      document.getElementById('danfoTest').textContent = s;
+      let valArray = dfd.toJSON(s, { format: 'row' })[0];
+      document.getElementById('danfoTestJson').textContent = JSON.stringify(valArray);
+  </script>
+
+  <script>
+    /*this works great, data from https://support.staffbase.com/hc/en-us/articles/360007108391-CSV-File-Examples*/
+    Papa.parse("rawData/example.csv", {
+      download: true,
+      complete: function(results) {
+        alert('done');
+        console.log(results);
+      }
+    });
+
+    let tempAccess = 'unset';
+
+    /*papa and danfo example*/
+    Papa.parse("rawData/example.csv", {
+      header: true,
+      skipEmptyLines: true,
+      dynamicTyping: true,
+      transformHeader: h => h.trim(),
+      complete: function(results) {
+        const df = new dfd.DataFrame(results.data);
+        tempAccess = df;
+        df.print();
+        /*df.plot('papadanfoTable').table();*/
+        renderDataFrame(df, "papadanfoTable");
+      }
+    });
+
+    function renderDataFrame(df, targetId) {
+      const rows = dfd.toJSON(df);   // array of row objects
+      const columns = df.columns;
+
+      let html = "<table><thead><tr>";
+      html += columns.map(col => `<th>${col}</th>`).join("");
+      html += "</tr></thead><tbody>";
+
+      html += rows.map(row => {
+        return "<tr>" + columns.map(col => `<td>${row[col] ?? ""}</td>`).join("") + "</tr>";
+      }).join("");
+
+      html += "</tbody></table>";
+
+      document.getElementById(targetId).innerHTML = html;
+    }
+  </script>
+
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+
+    const myChart = new Chart(ctx, {
+      type: 'line', // try 'bar', 'pie', etc.
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Sales',
+          data: valArray,
+          borderWidth: 2,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
