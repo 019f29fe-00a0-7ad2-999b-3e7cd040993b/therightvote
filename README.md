@@ -1,7 +1,7 @@
 <img src="/assets/logo_clean.svg" width=300>
 
 # The Right Vote – Data Science Projekt
-## <a href="https://corvinbreyer.github.io/datascience" target="_blank">→ Zur Anwendung</a>
+## <a href="https://019f29fe-00a0-7ad2-999b-3e7cd040993b.github.io/therightvote" target="_blank">→ Zur Anwendung</a>
 
 Dieses Repository enthält ein Projekt aus dem Modul **Data Science Projekt** des Studiengangs Onlinemedien ON23. Im Rahmen des Projekts haben wir uns mit der Entwicklung von Wahlergebnissen der AfD beschäftigt und untersucht, welche Muster sich in den verfügbaren Daten erkennen lassen.
 
